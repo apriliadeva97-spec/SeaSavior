@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Donasi - SeaSavior</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+ body { 
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 64, 175, 0.85)), 
+              url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  /* PERBAIKAN: Izinkan scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
+ }
+
+ /* PERBAIKAN: Container utama yang bisa di-scroll */
+ .main-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+ }
+
+ /* Card dengan background biru yang bagus */
+ .card-ocean {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(56, 189, 248, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  /* PERBAIKAN: Pastikan card tidak terlalu tinggi di mobile */
+  max-height: 90vh;
+  overflow-y: auto;
+ }
+
+ /* Animasi masuk */
+ @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+ }
+ .animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+ }
+
+ /* Efek hover untuk input */
+ .input-modern {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  color: #1e3a8a;
+  font-weight: 500;
+ }
+ .input-modern:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+  background: white;
+ }
+
+ /* Tombol kirim */
+ .btn-submit {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+ }
+ .btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #34d399, #10b981);
+ }
+
+ /* Tombol nominal */
+ .btn-amount {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  color: white;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+ }
+ .btn-amount:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+ }
+
+ .btn-amount.active {
+  background: rgba(245, 158, 11, 0.9);
+  color: #1e3a8a;
+  border-color: rgba(245, 158, 11, 0.8);
+  font-weight: bold;
+ }
+
+ /* Tombol reset */
+ .btn-reset {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  color: white;
+  cursor: pointer;
+ }
+ .btn-reset:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+ }
+
+ /* Efek gelembung */
+ .bubble {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+  z-index: 1;
+ }
+ @keyframes floatUp {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.2);
+    opacity: 0;
+  }
+ }
+
+ /* Ikon bergerak */
+ .marine-icon {
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  position: fixed;
+  z-index: 2;
+ }
+ @keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+ }
+
+ /* Logo container */
+ .logo-container {
+  animation: pulse 2s ease-in-out infinite;
+ }
+ @keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+ }
+
+ /* Progress bar */
+ .progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+ }
+
+ .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #eab308);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+ }
+
+ /* Success message */
+ .success-message {
+  display: none;
+  background: rgba(16, 185, 129, 0.9);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease;
+ }
+
+ @keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+ }
+
+ /* Scrollbar styling untuk card */
+ .card-ocean::-webkit-scrollbar {
+  width: 6px;
+ }
+
+ .card-ocean::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+ }
+
+ .card-ocean::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+ }
+
+ .card-ocean::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+ }
+
+ /* Media query untuk mobile */
+ @media (max-height: 700px) {
+  .card-ocean {
+    max-height: 85vh;
+    margin: 20px 0;
+  }
+  
+  .main-container {
+    align-items: flex-start;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+ }
+
+ @media (max-width: 640px) {
+  .card-ocean {
+    margin: 10px;
+    padding: 20px;
+  }
+  
+  .main-container {
+    padding: 10px;
+  }
+ }
+</style>
+</head>
+<body>
+
+<!-- PERBAIKAN: Tambah container utama untuk scrolling -->
+<div class="main-container">
+  
+  <!-- Efek partikel gelembung -->
+  <div id="bubbles-container"></div>
+
+  <!-- Ikon dekoratif -->
+  <div class="marine-icon" style="top: 10%; left: 5%; font-size: 2rem;">🐠</div>
+  <div class="marine-icon" style="top: 15%; right: 8%; animation-delay: 1s; font-size: 1.8rem;">🐬</div>
+  <div class="marine-icon" style="bottom: 25%; left: 7%; animation-delay: 2s; font-size: 2.2rem;">🐢</div>
+  <div class="marine-icon" style="bottom: 15%; right: 6%; animation-delay: 1.5s; font-size: 1.5rem;">🌊</div>
+
+  <!-- Card Donasi Utama -->
+  <div class="w-full max-w-md rounded-3xl card-ocean text-white relative z-10 animate-fade-in-up">
+    <div class="p-8">
+      <!-- Header dengan logo SeaSavior -->
+      <div class="text-center mb-8">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/30 backdrop-blur-sm logo-container">
+          <img src="https://i.pinimg.com/736x/a5/43/f3/a543f33103f207bd61e2c045d1a9b1fa.jpg" 
+               alt="SeaSavior Logo" 
+               class="w-12 h-12 rounded-full object-cover border-2 border-white">
+        </div>
+        <h2 class="text-3xl font-bold mb-2 text-white">
+          SeaSavior
+        </h2>
+        <p class="text-blue-100 text-sm leading-relaxed">
+          Bersama kita jaga keindahan laut Indonesia untuk generasi mendatang
+        </p>
+      </div>
+
+      <form id="donationForm" class="space-y-6">
+        <!-- Nama -->
+        <div>
+          <label class="block text-sm font-semibold mb-2 text-white">Nama Lengkap</label>
+          <input type="text" 
+                 id="fullName"
+                 class="w-full p-4 rounded-xl input-modern placeholder-blue-400 focus:outline-none transition-all duration-300" 
+                 placeholder="Masukkan nama lengkap Anda"
+                 required />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-semibold mb-2 text-white">Alamat Email</label>
+          <input type="email" 
+                 id="email"
+                 class="w-full p-4 rounded-xl input-modern placeholder-blue-400 focus:outline-none transition-all duration-300" 
+                 placeholder="email@contoh.com"
+                 required />
+        </div>
+
+        <!-- Nominal Donasi -->
+        <div>
+          <label class="block text-sm font-semibold mb-2 text-white">Nominal Donasi</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-600 font-bold">Rp</span>
+            <input type="number" 
+                   id="amount"
+                   class="w-full p-4 pl-12 rounded-xl input-modern placeholder-blue-400 focus:outline-none transition-all duration-300" 
+                   placeholder="50.000"
+                   min="10000"
+                   required />
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button type="button" class="flex-1 btn-amount py-3 rounded-xl text-sm font-medium transition duration-200" data-amount="50000">
+              Rp 50rb
+            </button>
+            <button type="button" class="flex-1 btn-amount py-3 rounded-xl text-sm font-medium transition duration-200" data-amount="100000">
+              Rp 100rb
+            </button>
+            <button type="button" class="flex-1 btn-amount py-3 rounded-xl text-sm font-medium transition duration-200" data-amount="250000">
+              Rp 250rb
+            </button>
+          </div>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div>
+          <label class="block text-sm font-semibold mb-2 text-white">Metode Pembayaran</label>
+          <select id="paymentMethod" class="w-full p-4 rounded-xl input-modern focus:outline-none transition-all duration-300 text-blue-900 font-medium" required>
+            <option value="">Pilih metode pembayaran</option>
+            <option value="bank">💳 Bank Transfer</option>
+            <option value="qris">📱 QRIS</option>
+            <option value="ewallet">📲 E-Wallet (Dana/OVO/Gopay)</option>
+            <option value="credit">💳 Kartu Kredit</option>
+          </select>
+        </div>
+
+        <!-- Pesan Tambahan -->
+        <div>
+          <label class="block text-sm font-semibold mb-2 text-white">Pesan (Opsional)</label>
+          <textarea 
+            id="message"
+            class="w-full p-4 rounded-xl input-modern placeholder-blue-400 focus:outline-none transition-all duration-300 resize-none" 
+            placeholder="Tulis pesan atau dukungan untuk SeaSavior..."
+            rows="3"></textarea>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <!-- TOMBOL AKSI -->
+        <div class="flex gap-3 mt-8">
+          <button type="button" 
+                  onclick="resetForm()"
+                  class="flex-1 py-4 rounded-xl btn-reset text-white font-semibold transition-all duration-300 text-lg">
+            🔄 Reset
+          </button>
+          <button type="submit" 
+                  class="flex-1 py-4 rounded-xl btn-submit text-lg font-bold transition-all duration-300 shadow-lg">
+            🚀 KIRIM DONASI
+          </button>
+        </div>
+      </form>
+
+      <!-- Success Message -->
+      <div id="successMessage" class="success-message">
+        <div class="text-4xl mb-3">🎉</div>
+        <h3 class="text-xl font-bold mb-2">Donasi Berhasil Dikirim!</h3>
+        <p class="text-sm opacity-90">Terima kasih atas kontribusi Anda untuk laut Indonesia.</p>
+        <button onclick="resetForm()" class="mt-4 px-6 py-2 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition duration-300">
+          Buat Donasi Baru
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center mt-6 pt-6 border-t border-white/30">
+        <p class="text-blue-100 text-xs">
+          💙 Terima kasih atas kontribusi Anda
+        </p>
+        <div class="flex justify-center space-x-4 mt-3">
+          <span class="text-xs text-blue-100">🔒 Aman</span>
+          <span class="text-xs text-blue-100">⚡ Cepat</span>
+          <span class="text-xs text-blue-100">🌿 Ramah Lingkungan</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Membuat efek gelembung
+  function createBubbles() {
+    const container = document.getElementById('bubbles-container');
+    const bubbleCount = 15;
+    
+    for (let i = 0; i < bubbleCount; i++) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+      
+      // Random properties
+      const size = Math.random() * 30 + 10;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 20 + 10;
+      const delay = Math.random() * 15;
+      
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${left}%`;
+      bubble.style.animationDuration = `${duration}s`;
+      bubble.style.animationDelay = `${delay}s`;
+      
+      container.appendChild(bubble);
+    }
+  }
+
+  // Animasi untuk tombol nominal
+  document.querySelectorAll('.btn-amount[data-amount]').forEach(button => {
+    button.addEventListener('click', function() {
+      // Reset semua tombol
+      document.querySelectorAll('.btn-amount').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Aktifkan tombol yang diklik
+      this.classList.add('active');
+      
+      // Set nilai input amount
+      const amount = this.getAttribute('data-amount');
+      document.getElementById('amount').value = amount;
+      
+      // Update progress bar
+      updateProgressBar();
+    });
+  });
+
+  // Update progress bar berdasarkan jumlah donasi
+  function updateProgressBar() {
+    const amount = parseInt(document.getElementById('amount').value) || 0;
+    let progress = 0;
+    
+    if (amount >= 250000) progress = 100;
+    else if (amount >= 100000) progress = 75;
+    else if (amount >= 50000) progress = 50;
+    else if (amount >= 10000) progress = 25;
+    
+    document.getElementById('progressFill').style.width = `${progress}%`;
+  }
+
+  // Reset form
+  function resetForm() {
+    document.getElementById('donationForm').reset();
+    document.querySelectorAll('.btn-amount').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('donationForm').style.display = 'block';
+  }
+
+  // Handle form submission
+  document.getElementById('donationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const amount = document.getElementById('amount').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    
+    // Validasi sederhana
+    if (!name || !email || !amount || !paymentMethod) {
+      alert('Mohon lengkapi semua field yang wajib diisi!');
+      return;
+    }
+    
+    if (parseInt(amount) < 10000) {
+      alert('Minimum donasi adalah Rp 10.000');
+      return;
+    }
+    
+    // Simulasi pengiriman data
+    console.log('Data Donasi:', {
+      name,
+      email,
+      amount: parseInt(amount),
+      paymentMethod,
+      message: document.getElementById('message').value
+    });
+    
+    // Tampilkan pesan sukses
+    document.getElementById('donationForm').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'block';
+    
+    alert('Donasi berhasil dikirim! Terima kasih atas kontribusi Anda. 🎉');
+  });
+
+  // Update progress bar saat input amount berubah
+  document.getElementById('amount').addEventListener('input', updateProgressBar);
+
+  // Jalankan saat halaman dimuat
+  document.addEventListener('DOMContentLoaded', function() {
+    createBubbles();
+    console.log('Halaman donasi siap! Sekarang bisa di-scroll.');
+  });
+</script>
+
+</body>
+</html>

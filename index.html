@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaSavior - Jaga Lautan Kita</title>
+    <!-- Memuat Tailwind CSS CDN untuk styling yang responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Mengatur font Inter -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdfa;
+        }
+        
+        /* Animasi dan efek baru */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes bubble {
+            0% { transform: translateY(0) scale(0.8); opacity: 0.7; }
+            100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .wave-animation {
+            animation: wave 8s ease-inout infinite;
+        }
+        
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubble linear infinite;
+        }
+        
+        .text-glow {
+            animation: textGlow 3s ease-in-out infinite;
+        }
+        
+        /* Background laut baru dengan foto */
+        .ocean-bg {
+            background-image: url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ocean-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0, 61, 92, 0.7) 0%, rgba(0, 119, 182, 0.6) 100%);
+            pointer-events: none;
+        }
+        
+        /* Efek partikel */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Style untuk modal (pop-up) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #ffffff;
+            margin: 15% auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Efek untuk tombol */
+        .btn-glow {
+            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Efek untuk bagian dampak */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .stat-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        /* Efek cahaya bawah laut - DIKECILKAN */
+        .light-ray {
+            position: absolute;
+            width: 120%; /* Dikecilkan dari 150% */
+            height: 60px; /* Dikecilkan dari 100px */
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, transparent 100%); /* Transparansi dikurangi */
+            transform: rotate(-5deg);
+            top: 0;
+            left: -10%; /* Disesuaikan */
+            animation: rayMove 20s linear infinite; /* Diperlambat */
+        }
+        
+        @keyframes rayMove {
+            0% { transform: rotate(-5deg) translateX(-100%); }
+            100% { transform: rotate(-5deg) translateX(100%); }
+        }
+        
+        /* Efek teks baru */
+        .hero-title {
+            background: linear-gradient(to right, #ffffff, #fef3c7, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Efek border gradient */
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #0ea5e9, #0d9488, #0891b2, #0369a1);
+            padding: 3px;
+            border-radius: 12px;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            padding: 3px;
+            background: linear-gradient(135deg, #0ea5e9, #0d9488, #0891b2, #0369a1);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Style untuk logo baru */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Efek untuk peta */
+        .map-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            height: 400px;
+            background: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: #0c4a6e;
+            padding: 20px;
+        }
+
+        .map-placeholder .text-4xl {
+            margin-bottom: 10px;
+        }
+
+        /* Efek untuk langkah-langkah */
+        .step-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #0ea5e9;
+        }
+
+        .step-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Perbaikan responsivitas untuk mobile */
+        @media (max-width: 768px) {
+            /* Header */
+            .logo-container span {
+                font-size: 1.25rem;
+            }
+            
+            /* Hero section */
+            .hero-title {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            /* Container padding */
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Grid layout untuk mobile */
+            .grid-cols-1-mobile {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Card padding untuk mobile */
+            .card-mobile {
+                padding: 1.5rem;
+            }
+            
+            /* Tombol untuk mobile */
+            .btn-mobile {
+                width: 100%;
+                padding: 0.75rem 1rem;
+            }
+            
+            /* Text size untuk mobile */
+            .text-mobile-lg {
+                font-size: 1.125rem;
+            }
+            
+            .text-mobile-xl {
+                font-size: 1.25rem;
+            }
+            
+            .text-mobile-2xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-mobile-3xl {
+                font-size: 1.875rem;
+            }
+            
+            /* Spacing untuk mobile */
+            .section-padding-mobile {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+            
+            /* Map container untuk mobile */
+            .map-container {
+                height: 300px;
+            }
+            
+            /* Modal untuk mobile */
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 1rem;
+            }
+            
+            /* Input fields untuk mobile */
+            .input-mobile {
+                font-size: 16px; /* Mencegah zoom di iOS */
+            }
+            
+            /* Hide elements on mobile */
+            .hide-mobile {
+                display: none;
+            }
+        }
+        
+        /* Perbaikan untuk layar sangat kecil */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .text-mobile-3xl {
+                font-size: 1.5rem;
+            }
+            
+            .section-padding-mobile {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+            
+            .card-mobile {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigasi -->
+    <header class="bg-gradient-to-r from-cyan-800 to-blue-900 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- Logo/Nama Aplikasi dengan gambar baru -->
+            <a href="#beranda" class="logo-container">
+                <img src="https://i.pinimg.com/1200x/21/f7/25/21f725dc71d5e76bcdf69d525d6fda95.jpg" 
+                     alt="SeaSavior Logo" 
+                     class="logo-image floating">
+                <span class="text-xl md:text-2xl font-extrabold text-white tracking-wider text-glow">SeaSavior</span>
+            </a>
+            <!-- Navigasi Desktop -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="#beranda" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Beranda
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#cara-menjual" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Cara Menjual
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#misi" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Misi Kami
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#cara-donasi" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Cara Donasi
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#dampak" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Dampak
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#bank-sampah" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Temukan Kami
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#aksi" class="text-white hover:text-yellow-300 transition duration-300 font-medium relative group">
+                    Ambil Aksi
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+            <!-- Tombol Aksi Utama -->
+            <button onclick="openDonationModal()" class="hidden md:block bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 text-cyan-900 font-bold py-2 px-6 rounded-full hover:from-yellow-300 hover:via-orange-300 hover:to-yellow-400 transition duration-300 shadow-lg btn-glow transform hover:scale-105">
+                Donasi Sekarang
+            </button>
+            <!-- Tombol Menu Mobile -->
+            <button id="menu-button" class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+        <!-- Menu Mobile (Tersembunyi secara default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-b from-cyan-800 to-blue-900 transition-all duration-300">
+            <nav class="flex flex-col space-y-2 p-4">
+                <a href="#beranda" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Beranda</a>
+                <a href="#cara-menjual" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Cara Menjual</a>
+                <a href="#misi" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Misi Kami</a>
+                <a href="#cara-donasi" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Cara Donasi</a>
+                <a href="#dampak" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Dampak</a>
+                <a href="#bank-sampah" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Temukan Kami</a>
+                <a href="#aksi" class="text-white hover:bg-cyan-700 p-3 rounded-lg transition duration-300 text-center">Ambil Aksi</a>
+                <button onclick="openDonationModal()" class="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 text-cyan-900 font-bold py-3 px-4 rounded-full text-center hover:from-yellow-300 hover:via-orange-300 hover:to-yellow-400 mt-2 transition duration-300 btn-glow">
+                    Donasi Sekarang
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Bagian Beranda (Hero Section) yang sudah digabung dengan Apa itu SeaSavior -->
+    <section id="beranda" class="pt-16 md:pt-24 pb-16 md:pb-32 lg:pt-32 lg:pb-40 ocean-bg relative overflow-hidden section-padding-mobile">
+        
+        <!-- Efek cahaya bawah laut - DIKECILKAN -->
+        <div class="light-ray" style="animation-delay: 0s;"></div>
+        <div class="light-ray" style="top: 30%; animation-delay: 8s;"></div>
+        <div class="light-ray" style="top: 60%; animation-delay: 15s;"></div>
+        
+        <div class="container mx-auto px-4 text-center text-white relative z-10">
+            <h1 class="text-mobile-3xl sm:text-4xl lg:text-6xl font-extrabold mb-4 drop-shadow-lg hero-title">
+                Jadikan Lautan Indonesia Bersih Kembali
+            </h1>
+            <p class="text-mobile-lg sm:text-xl mb-8 max-w-3xl mx-auto opacity-90">
+                Setiap aksi kecil Anda adalah gelombang besar perubahan. Bersama SeaSavior, kita lindungi masa depan biru kita.
+            </p>
+            <a href="#cara-menjual" class="bg-yellow-400 text-cyan-800 font-extrabold py-3 px-6 md:px-8 rounded-full text-lg md:text-xl hover:bg-yellow-300 transition duration-300 shadow-xl transform hover:scale-105 btn-mobile">
+                Jual Sampah Anda Sekarang!
+            </a>
+        </div>
+        
+        <!-- Bagian Apa itu SeaSavior yang dipindahkan ke dalam Beranda -->
+        <div class="container mx-auto px-4 mt-12 lg:mt-24 relative z-10">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-gradient-to-br from-white/90 to-blue-50/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg border border-white/30 card-mobile">
+                    <div class="text-center mb-6">
+                        <span class="text-4xl">🌊</span>
+                        <h2 class="text-mobile-2xl sm:text-4xl font-bold mt-4 text-cyan-800">Apa itu SeaSavior?</h2>
+                    </div>
+                    <div class="space-y-4 text-mobile-lg text-gray-700 leading-relaxed">
+                        <p class="text-center">
+                            <strong class="text-cyan-600 text-xl">SeaSavior</strong> SeaSavior merupakan platform yang berfokus pada upaya pelestarian laut Indonesia melalui edukasi, program donasi, serta kegiatan sosial. Kami hadir untuk mengajak masyarakat berperan aktif dalam menjaga kebersihan dan kesehatan ekosistem laut demi keberlanjutan lingkungan di masa depan.
+                        <p class="text-center">
+                            Melalui berbagai program seperti 
+                            <span class="text-cyan-600 font-semibold">edukasi</span>, 
+                            <span class="text-teal-600 font-semibold">aksi nyata</span>, dan 
+                            <span class="text-green-600 font-semibold">donasi</span>—setiap orang bisa berkontribusi dalam menyelamatkan laut dengan cara yang mudah dan berarti.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-cyan-100">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                            <div class="flex flex-col items-center gap-2 text-cyan-700 p-4 rounded-lg bg-cyan-50/70 backdrop-blur-sm">
+                                <span class="text-2xl">📚</span>
+                                <span class="font-semibold">Edukasi</span>
+                                <span class="text-sm text-cyan-600">Konservasi Laut</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 text-teal-700 p-4 rounded-lg bg-teal-50/70 backdrop-blur-sm">
+                                <span class="text-2xl">🤝</span>
+                                <span class="font-semibold">Aksi Nyata</span>
+                                <span class="text-sm text-teal-600">Bersih Pantai</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 text-green-700 p-4 rounded-lg bg-green-50/70 backdrop-blur-sm">
+                                <span class="text-2xl">💙</span>
+                                <span class="font-semibold">Donasi</span>
+                                <span class="text-sm text-green-600">Dukung Program</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Baru: Cara Menjual Sampah -->
+    <section id="cara-menjual" class="py-12 md:py-16 lg:py-24 bg-gradient-to-br from-teal-50 to-cyan-100 section-padding-mobile">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-mobile-2xl sm:text-4xl font-bold mb-4 text-cyan-700">Cara Menjual Sampah ke SeaSavior</h2>
+                <p class="text-mobile-lg text-gray-600 max-w-2xl mx-auto">
+                    Jadilah pahlawan laut dengan menjual sampah plastik Anda. Prosesnya mudah, cepat, dan menguntungkan!
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16">
+                <!-- Langkah-langkah Menjual Sampah -->
+                <div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-6 text-cyan-800">Langkah-Langkah Menjual Sampah</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Langkah 1 -->
+                        <div class="step-card bg-white p-4 md:p-6 rounded-lg shadow-md card-mobile">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    1
+                                </div>
+                                <div>
+                                    <h4 class="text-lg md:text-xl font-bold text-cyan-700 mb-2">Kumpulkan Sampah Plastik</h4>
+                                    <p class="text-gray-600">Pisahkan sampah plastik dari jenis sampah lainnya. Pastikan sampah sudah dicuci dan dikeringkan.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 2 -->
+                        <div class="step-card bg-white p-4 md:p-6 rounded-lg shadow-md card-mobile">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    2
+                                </div>
+                                <div>
+                                    <h4 class="text-lg md:text-xl font-bold text-teal-700 mb-2">Temukan Lokasi Terdekat</h4>
+                                    <p class="text-gray-600">Gunakan fitur pencari lokasi kami untuk menemukan cabang SeaSavior terdekat dari lokasi Anda.</p>
+                                    <button onclick="findNearestLocation()" class="mt-3 bg-cyan-500 text-white py-2 px-4 rounded-full text-sm hover:bg-cyan-600 transition duration-300 btn-mobile">
+                                        📍 Cari Lokasi Terdekat
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 3 -->
+                        <div class="step-card bg-white p-4 md:p-6 rounded-lg shadow-md card-mobile">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    3
+                                </div>
+                                <div>
+                                    <h4 class="text-lg md:text-xl font-bold text-green-700 mb-2">Bawa Sampah ke Cabang</h4>
+                                    <p class="text-gray-600">Bawa sampah plastik Anda ke cabang SeaSavior terdekat selama jam operasional.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 4 -->
+                        <div class="step-card bg-white p-4 md:p-6 rounded-lg shadow-md card-mobile">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    4
+                                </div>
+                                <div>
+                                    <h4 class="text-lg md:text-xl font-bold text-yellow-700 mb-2">Timbang & Dapatkan Bayaran</h4>
+                                    <p class="text-gray-600">Sampah akan ditimbang dan Anda akan menerima pembayaran sesuai dengan berat dan jenis sampah.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pencari Lokasi -->
+                <div>
+                    <h3 class="text-xl md:text-2xl font-bold mb-6 text-cyan-800">Temukan Cabang Terdekat</h3>
+                    
+                    <div class="bg-white p-4 md:p-6 rounded-xl shadow-lg mb-6 card-mobile">
+                        <div class="mb-4">
+                            <label for="lokasi-input" class="block text-sm font-medium text-gray-700 mb-2">
+                                Masukkan lokasi Anda:
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="text" id="lokasi-input" placeholder="Contoh: Jakarta, Bali, Surabaya" class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 input-mobile">
+                                <button onclick="findNearestLocation()" class="bg-teal-500 text-white py-3 px-6 rounded-lg hover:bg-teal-600 transition duration-300 btn-mobile">
+                                    Cari
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="map-container">
+                            <div class="map-placeholder">
+                                <div class="text-4xl">🗺️</div>
+                                <p class="text-lg font-semibold">Peta Lokasi Cabang</p>
+                                <p class="text-sm mt-2">Masukkan lokasi Anda untuk melihat cabang terdekat</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kalkulator Sampah Sederhana -->
+                    <div class="bg-white p-4 md:p-6 rounded-xl shadow-lg card-mobile">
+                        <h4 class="text-lg md:text-xl font-bold mb-4 text-cyan-700">Perkirakan Penghasilan Anda</h4>
+                        
+                        <div class="mb-4">
+                            <label for="jenis-sampah" class="block text-sm font-medium text-gray-700 mb-2">
+                                Jenis Sampah:
+                            </label>
+                            <select id="jenis-sampah" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 input-mobile">
+                                <option value="plastik-keras">Plastik Keras (Botol, Jerigen) - Rp 5.000/kg</option>
+                                <option value="jaring-ikan">Jaring Ikan Bekas - Rp 15.000/kg</option>
+                                <option value="plastik-lunak">Plastik Lunak (Kemasan) - Rp 3.000/kg</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="berat-sampah" class="block text-sm font-medium text-gray-700 mb-2">
+                                Perkiraan Berat (kg):
+                            </label>
+                            <input type="number" id="berat-sampah" min="0" step="0.1" placeholder="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 input-mobile">
+                        </div>
+                        
+                        <button onclick="hitungPenghasilan()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-cyan-900 font-bold py-3 rounded-lg hover:from-yellow-300 hover:to-yellow-400 transition duration-300 btn-mobile">
+                            Hitung Penghasilan
+                        </button>
+                        
+                        <div id="hasil-penghasilan" class="mt-4 p-4 bg-teal-100 border border-teal-300 rounded-lg text-center font-semibold text-teal-800 hidden">
+                            <p class="text-lg">Perkiraan Penghasilan: <span id="nilai-penghasilan" class="text-2xl font-extrabold">Rp 0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Menjual Sampah -->
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-mobile">
+                <h3 class="text-xl md:text-2xl font-bold mb-6 text-cyan-700 text-center">Tips untuk Hasil Maksimal</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">🚿</div>
+                        <h4 class="font-bold text-cyan-700 mb-2">Bersihkan Sampah</h4>
+                        <p class="text-sm text-gray-600">Cuci dan keringkan sampah plastik sebelum dijual untuk nilai terbaik</p>
+                    </div>
+                    
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">📦</div>
+                        <h4 class="font-bold text-cyan-700 mb-2">Pisahkan Jenis</h4>
+                        <p class="text-sm text-gray-600">Pisahkan sampah berdasarkan jenis untuk memudahkan proses</p>
+                    </div>
+                    
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">⏰</div>
+                        <h4 class="font-bold text-cyan-700 mb-2">Cek Jam Operasional</h4>
+                        <p class="text-sm text-gray-600">Pastikan cabang buka sebelum mengunjungi</p>
+                    </div>
+                    
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">📞</div>
+                        <h4 class="font-bold text-cyan-700 mb-2">Hubungi Terlebih Dahulu</h4>
+                        <p class="text-sm text-gray-600">Telepon cabang untuk konfirmasi ketersediaan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Cara Donasi -->
+    <section id="cara-donasi" class="py-12 md:py-16 lg:py-24 bg-white section-padding-mobile">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-mobile-2xl sm:text-4xl font-bold mb-4 text-cyan-700">Cara Donasi</h2>
+                <p class="text-mobile-lg text-gray-600 max-w-2xl mx-auto">
+                    Berdonasi untuk laut Indonesia sangat mudah. Pilih cara yang paling nyaman untuk Anda!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+                <!-- Langkah 1 -->
+                <div class="text-center p-6 bg-cyan-50 rounded-2xl border border-cyan-100 hover:shadow-lg transition duration-300 card-mobile">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg md:text-xl">
+                        1
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold mb-3 text-cyan-800">Pilih Metode</h3>
+                    <p class="text-gray-600 mb-4">
+                        Transfer bank, QRIS, e-wallet, atau kartu kredit
+                    </p>
+                    <div class="text-3xl mb-3">💳</div>
+                </div>
+
+                <!-- Langkah 2 -->
+                <div class="text-center p-6 bg-teal-50 rounded-2xl border border-teal-100 hover:shadow-lg transition duration-300 card-mobile">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg md:text-xl">
+                        2
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold mb-3 text-teal-800">Tentukan Nominal</h3>
+                    <p class="text-gray-600 mb-4">
+                        Rp 50.000, Rp 100.000, atau jumlah lainnya
+                    </p>
+                    <div class="text-3xl mb-3">💰</div>
+                </div>
+
+                <!-- Langkah 3 -->
+                <div class="text-center p-6 bg-green-50 rounded-2xl border border-green-100 hover:shadow-lg transition duration-300 card-mobile">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg md:text-xl">
+                        3
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold mb-3 text-green-800">Konfirmasi</h3>
+                    <p class="text-gray-600 mb-4">
+                        Dapatkan laporan penggunaan dana via email
+                    </p>
+                    <div class="text-3xl mb-3">📧</div>
+                </div>
+            </div>
+
+            <!-- Metode Pembayaran -->
+            <div class="mt-12 md:mt-16 max-w-4xl mx-auto">
+                <h3 class="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center text-cyan-700">Metode Pembayaran yang Tersedia</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="text-3xl mb-2">🏦</div>
+                        <p class="font-semibold text-gray-700">Bank Transfer</p>
+                        <p class="text-sm text-gray-500">BCA, BNI, Mandiri, BRI</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="text-3xl mb-2">📱</div>
+                        <p class="font-semibold text-gray-700">QRIS</p>
+                        <p class="text-sm text-gray-500">Scan & Bayar</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="text-3xl mb-2">📲</div>
+                        <p class="font-semibold text-gray-700">E-Wallet</p>
+                        <p class="text-sm text-gray-500">Dana, OVO, Gopay</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="text-3xl mb-2">💳</div>
+                        <p class="font-semibold text-gray-700">Kartu Kredit</p>
+                        <p class="text-sm text-gray-500">Visa, Mastercard</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Donasi -->
+            <div class="text-center mt-8 md:mt-12">
+                <button onclick="openDonationModal()" class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-cyan-900 font-bold py-3 md:py-4 px-6 md:px-8 rounded-full text-lg hover:from-yellow-300 hover:to-yellow-400 transition duration-300 shadow-lg transform hover:scale-105 btn-mobile">
+                    💫 Mulai Donasi Sekarang
+                </button>
+                <p class="text-sm text-gray-500 mt-4">
+                    Proses aman & terenkripsi • Dana digunakan 100% untuk program konservasi
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Misi Kami -->
+    <section id="misi" class="py-12 md:py-16 lg:py-24 bg-white section-padding-mobile">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-mobile-2xl sm:text-4xl font-bold mb-4 text-cyan-700">Tiga Pilar Misi SeaSavior</h2>
+            <p class="mb-8 md:mb-12 max-w-4xl mx-auto text-gray-600">Fokus kami terbagi dalam tiga inisiatif utama yang didesain untuk menciptakan dampak nyata dan berkelanjutan bagi ekosistem laut.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- Pilar 1: Edukasi -->
+                <div class="p-6 bg-gradient-to-br from-blue-500 to-cyan-600 text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-2 card-mobile">
+                    <div class="text-5xl mb-4">💡</div>
+                    <h4 class="text-lg md:text-xl font-bold mb-3">Edukasi Konservasi</h4>
+                    <p class="text-sm opacity-90">Kami menyelenggarakan lokakarya dan program sekolah untuk menanamkan kesadaran dan tanggung jawab terhadap laut sejak dini.</p>
+                </div>
+                <!-- Pilar 2: Aksi Nyata (Bank Sampah) -->
+                <div class="p-6 bg-gradient-to-br from-teal-500 to-green-600 text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-2 card-mobile">
+                    <div class="text-5xl mb-4">💰</div>
+                    <h4 class="text-lg md:text-xl font-bold mb-3">Bank Sampah Laut</h4>
+                    <p class="text-sm opacity-90">Program insentif yang memungkinkan masyarakat menukarkan sampah laut menjadi nilai ekonomi atau kebutuhan pokok.</p>
+                </div>
+                <!-- Pilar 3: Penelitian -->
+                <div class="p-6 bg-gradient-to-br from-cyan-500 to-blue-700 text-white rounded-xl shadow-lg hover:shadow-2xl transition duration-500 transform hover:-translate-y-2 card-mobile">
+                    <div class="text-5xl mb-4">🔬</div>
+                    <h4 class="text-lg md:text-xl font-bold mb-3">Penelitian Ekosistem</h4>
+                    <p class="text-sm opacity-90">Mendukung penelitian ilmiah untuk memahami dan memulihkan terumbu karang serta populasi spesies laut yang terancam.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Dampak (Our Impact) -->
+    <section id="dampak" class="py-12 md:py-16 lg:py-24 bg-cyan-50 section-padding-mobile">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-mobile-2xl sm:text-4xl font-bold mb-8 md:mb-12 text-cyan-700">Dampak Kami Sejauh Ini</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
+                <!-- Stat 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg card-mobile">
+                    <p class="text-4xl md:text-5xl font-extrabold text-blue-600">30+</p>
+                    <p class="text-lg mt-2 font-medium text-gray-600">Lokasi Pantai Dibersihkan</p>
+                </div>
+                <!-- Stat 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg card-mobile">
+                    <p class="text-4xl md:text-5xl font-extrabold text-green-600">1.5 Ton</p>
+                    <p class="text-lg mt-2 font-medium text-gray-600">Sampah Plastik Terkumpul</p>
+                </div>
+                <!-- Stat 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg card-mobile">
+                    <p class="text-4xl md:text-5xl font-extrabold text-yellow-600">500+</p>
+                    <p class="text-lg mt-2 font-medium text-gray-600">Relawan Aktif Bergabung</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Bagian Baru: Bank Sampah Laut & Lokasi Cabang -->
+    <section id="bank-sampah" class="py-12 md:py-16 lg:py-24 bg-gradient-to-r from-teal-500 to-cyan-600 section-padding-mobile">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white mb-8 md:mb-12">
+                <span class="text-sm font-semibold uppercase tracking-wider bg-white bg-opacity-20 py-1 px-3 rounded-full mb-3 inline-block">Ekonomi Sirkular</span>
+                <h2 class="text-mobile-2xl sm:text-4xl font-extrabold mb-4 drop-shadow">
+                    Bank Sampah Laut: Tukar Limbah, Raih Manfaat
+                </h2>
+                <p class="text-mobile-lg mb-6 opacity-90 max-w-3xl mx-auto">
+                    Kami memberikan insentif langsung kepada nelayan dan masyarakat pesisir yang mengumpulkan sampah plastik dari laut. 
+                    Sampah ditimbang, dicatat, dan ditukarkan dengan uang tunai atau kebutuhan pokok.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start">
+                <!-- Daftar Cabang Bank Sampah -->
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl card-mobile">
+                    <h3 class="text-xl md:text-2xl font-bold mb-6 text-cyan-700 text-center">📍 Lokasi Cabang Kami</h3>
+                    
+                    <div class="space-y-6 max-h-96 overflow-y-auto">
+                        <!-- Cabang 1 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">🏝️</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Bali</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Pantai Kuta No. 123, Kuta, Badung, Bali</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Senin-Sabtu, 08:00-17:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Pantai+Kuta+No.+123,+Kuta,+Badung,+Bali" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cabang 2 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">🌊</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Jakarta</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Marina Ancol No. 45, Jakarta Utara, DKI Jakarta</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Setiap Hari, 07:00-18:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Marina+Ancol+No.+45,+Jakarta+Utara,+DKI+Jakarta" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cabang 3 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">🐠</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Lombok</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Senggigi Beach No. 78, Lombok Barat, NTB</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Senin-Jumat, 09:00-16:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Senggigi+Beach+No.+78,+Lombok+Barat,+NTB" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cabang 4 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">🏖️</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Makassar</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Losari Beach No. 56, Makassar, Sulawesi Selatan</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Setiap Hari, 08:00-17:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Losari+Beach+No.+56,+Makassar,+Sulawesi+Selatan" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cabang 5 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">🌴</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Raja Ampat</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Waisai Torang No. 34, Raja Ampat, Papua Barat</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Senin-Sabtu, 07:00-15:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Waisai+Torang+No.+34,+Raja+Ampat,+Papua+Barat" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cabang 6 -->
+                        <div class="p-4 border border-cyan-100 rounded-lg hover:bg-cyan-50 transition duration-300">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-cyan-100 p-2 rounded-full">
+                                    <span class="text-cyan-600 font-bold">⛵</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-cyan-800">Cabang Surabaya</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jl. Kenjeran No. 89, Surabaya, Jawa Timur</p>
+                                    <p class="text-xs text-cyan-600 mt-2">🕒 Buka: Setiap Hari, 08:00-18:00</p>
+                                    <a href="https://maps.google.com/?q=Jl.+Kenjeran+No.+89,+Surabaya,+Jawa+Timur" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-600 transition duration-200">
+                                        <span>🗺️</span> Buka di Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-cyan-50 rounded-lg border border-cyan-200">
+                        <p class="text-sm text-cyan-700 text-center">
+                            💡 <strong>Tips:</strong> Bawa sampah plastik yang sudah dicuci dan dikeringkan untuk nilai tukar terbaik!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulir Kalkulator Sampah -->
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl card-mobile">
+                    <h3 class="text-xl md:text-2xl font-bold mb-6 text-cyan-700 text-center">💰 Kalkulator Nilai Sampah</h3>
+                    
+                    <div class="mb-4">
+                        <label for="beratPlastik" class="block text-sm font-medium text-gray-700 mb-2">
+                            🥤 Plastik Keras (Botol, Jerigen) 
+                            <span class="text-cyan-600 font-semibold">- Rp 5.000/kg</span>
+                        </label>
+                        <input type="number" id="beratPlastik" placeholder="Contoh: 2.5" value="0" min="0" step="0.1" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 input-mobile">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="beratJaring" class="block text-sm font-medium text-gray-700 mb-2">
+                            🕸️ Jaring Ikan Bekas (Ghost Net) 
+                            <span class="text-cyan-600 font-semibold">- Rp 15.000/kg</span>
+                        </label>
+                        <input type="number" id="beratJaring" placeholder="Contoh: 1.0" value="0" min="0" step="0.1" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 input-mobile">
+                    </div>
+
+                    <button onclick="hitungNilaiSampah()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-cyan-900 font-bold py-3 rounded-full hover:from-yellow-300 hover:to-yellow-400 transition duration-300 shadow-md transform hover:scale-[1.01] btn-mobile">
+                        💰 Hitung Total Nilai Tukar
+                    </button>
+
+                    <div id="hasilKalkulator" class="mt-6 p-4 bg-teal-100 border border-teal-300 rounded-lg text-center font-semibold text-teal-800 hidden">
+                        <p class="text-lg">Total Estimasi Nilai Tukar: <span id="nilaiTukarTotal" class="text-2xl font-extrabold">Rp 0</span></p>
+                        <p class="text-sm text-teal-600 mt-2">💡 Bawa sampah Anda ke cabang terdekat!</p>
+                    </div>
+
+                    <!-- Info Tambahan -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-bold text-gray-700 mb-2">📋 Syarat & Ketentuan:</h4>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>• Sampah harus bersih dan kering</li>
+                            <li>• Plastik tidak boleh tercampur dengan sampah organik</li>
+                            <li>• Minimal penukaran 1 kg per jenis sampah</li>
+                            <li>• Harga dapat berubah sesuai kondisi pasar</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Ambil Aksi (CTA) -->
+    <section id="aksi" class="py-12 md:py-16 lg:py-24 bg-cyan-700 section-padding-mobile">
+        <div class="container mx-auto px-4 text-center text-white">
+            <h2 class="text-mobile-2xl sm:text-4xl font-bold mb-4">Mari Jadi Bagian dari Solusi, Bukan Polusi.</h2>
+            <p class="text-mobile-lg mb-8 opacity-90">Ada banyak cara bagi Anda untuk membantu menjaga lautan tetap sehat. Pilih jalur kontribusi Anda hari ini.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <!-- Tombol ini sekarang mengarah ke Cara Menjual -->
+                <a href="#cara-menjual" class="bg-yellow-400 text-cyan-800 font-bold py-3 px-6 md:px-8 rounded-full text-lg hover:bg-yellow-300 transition duration-300 shadow-xl transform hover:scale-105 btn-mobile">
+                    1. Jual Sampah Anda
+                </a>
+                <button onclick="openDonationModal()" class="bg-white text-cyan-700 font-bold py-3 px-6 md:px-8 rounded-full text-lg hover:bg-gray-200 transition duration-300 shadow-xl transform hover:scale-105 btn-mobile">
+                    2. Beri Donasi / Daftar Relawan
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-cyan-900 py-8">
+        <div class="container mx-auto px-4 text-center text-gray-300">
+            <div class="mb-4">
+                <a href="#" class="text-white hover:text-cyan-400 mx-3">Kebijakan Privasi</a>
+                <span class="mx-1">|</span>
+                <a href="#" class="text-white hover:text-cyan-400 mx-3">Hubungi Kami</a>
+            </div>
+            <p class="text-sm">&copy; 2025 SeaSavior. Semua Hak Dilindungi. Dibangun dengan cinta untuk laut.</p>
+        </div>
+    </footer>
+
+    <!-- Bagian Alamat dan Kontak -->
+    <section class="bg-cyan-800 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Alamat Kantor Pusat -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <span class="mr-2">🏢</span> Kantor Pusat SeaSavior
+                    </h3>
+                    <div class="space-y-3">
+                        <p class="flex items-start">
+                            <span class="mr-3">📍</span>
+                            <span>Jl. GajahMada No. 123, Kelurahan Bahari, Kecamatan Samudra, Mojokerto 14450</span>
+                        </p>
+                        <p class="flex items-center">
+                            <span class="mr-3">📞</span>
+                            <span>(021) 1234-5678</span>
+                        </p>
+                        <p class="flex items-center">
+                            <span class="mr-3">📱</span>
+                            <span>+62 812-3456-7890 (WhatsApp)</span>
+                        </p>
+                        <p class="flex items-center">
+                            <span class="mr-3">✉️</span>
+                            <span>info@seasavior.id</span>
+                        </p>
+                        <p class="flex items-center">
+                            <span class="mr-3">🌐</span>
+                            <span>www.seasavior.id</span>
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/20">
+                        <h4 class="font-semibold mb-2">Jam Operasional:</h4>
+                        <p>Senin - Jumat: 08:00 - 17:00 WIB</p>
+                        <p>Sabtu: 08:00 - 14:00 WIB</p>
+                        <p class="text-sm opacity-80 mt-1">Minggu & Hari Libur Nasional: Tutup</p>
+                    </div>
+                </div>
+
+                <!-- Kontak Cepat -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <span class="mr-2">📞</span> Kontak Cepat
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300 cursor-pointer">
+                            <span class="text-2xl mr-3">💬</span>
+                            <div>
+                                <p class="font-semibold">Layanan Pelanggan</p>
+                                <p class="text-sm opacity-80">Pertanyaan umum & bantuan</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300 cursor-pointer">
+                            <span class="text-2xl mr-3">🤝</span>
+                            <div>
+                                <p class="font-semibold">Kerjasama & Partnership</p>
+                                <p class="text-sm opacity-80">Untuk kemitraan bisnis</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300 cursor-pointer">
+                            <span class="text-2xl mr-3">📰</span>
+                            <div>
+                                <p class="font-semibold">Media & Humas</p>
+                                <p class="text-sm opacity-80">Wawancara & liputan media</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300 cursor-pointer">
+                            <span class="text-2xl mr-3">🔬</span>
+                            <div>
+                                <p class="font-semibold">Penelitian & Edukasi</p>
+                                <p class="text-sm opacity-80">Program sekolah & universitas</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sosial Media -->
+                    <div class="mt-6 pt-4 border-t border-white/20">
+                        <h4 class="font-semibold mb-3">Ikuti Kami di Media Sosial:</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-white/20 p-2 rounded-full hover:bg-white/30 transition duration-300">
+                                <span class="text-lg">📘</span>
+                            </a>
+                            <a href="#" class="bg-white/20 p-2 rounded-full hover:bg-white/30 transition duration-300">
+                                <span class="text-lg">📷</span>
+                            </a>
+                            <a href="#" class="bg-white/20 p-2 rounded-full hover:bg-white/30 transition duration-300">
+                                <span class="text-lg">🐦</span>
+                            </a>
+                            <a href="#" class="bg-white/20 p-2 rounded-full hover:bg-white/30 transition duration-300">
+                                <span class="text-lg">🎬</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Peta Lokasi -->
+            <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">🗺️</span> Temukan Kami di Peta
+                </h3>
+                <div class="bg-gray-300 h-64 rounded-lg flex items-center justify-center text-gray-600">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">📍</div>
+                        <p class="font-semibold">Peta Lokasi Kantor Pusat SeaSavior</p>
+                        <p class="text-sm mt-2">Jl. Gajah Mada No. 123, Mojokerto</p>
+                        <button class="mt-3 bg-cyan-600 text-white py-2 px-4 rounded-lg hover:bg-cyan-500 transition duration-300">
+                            Buka di Google Maps
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal (Pop-up) untuk Donasi/Relawan -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-xl md:text-2xl font-bold text-cyan-700">Ambil Aksi</h3>
+                <button onclick="closeDonationModal()" class="text-gray-500 hover:text-gray-800 text-2xl font-semibold">&times;</button>
+            </div>
+            <p class="text-gray-600 mb-6">Pilih bagaimana Anda ingin berkontribusi pada misi SeaSavior:</p>
+            
+            <a href="donasi.html" class="block text-center bg-yellow-500 text-cyan-900 font-bold py-3 mb-3 rounded-full hover:bg-yellow-400 transition duration-300 btn-mobile">
+                Lanjut ke Halaman Donasi
+            </a>
+            <a href="regis.html" class="block text-center bg-teal-500 text-white font-bold py-3 rounded-full hover:bg-teal-400 transition duration-300 btn-mobile">
+                Daftar Sebagai Relawan
+            </a>
+            <p class="text-xs text-center text-gray-400 mt-4">Simulasi pendaftaran/donasi.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript untuk Toggle Menu Mobile, Kalkulator, dan Modal -->
+    <script>
+        // Data Nilai Tukar Sampah (Dalam Rupiah per Kg)
+        const NILAI_TUKAR = {
+            plastikKeras: 5000,
+            jaringBekas: 15000,
+            plastikLunak: 3000
+        };
+
+        // Fungsi Kalkulator Nilai Sampah
+        function hitungNilaiSampah() {
+            const beratPlastik = parseFloat(document.getElementById('beratPlastik').value) || 0;
+            const beratJaring = parseFloat(document.getElementById('beratJaring').value) || 0;
+            const hasilDiv = document.getElementById('hasilKalkulator');
+            const nilaiTotalSpan = document.getElementById('nilaiTukarTotal');
+
+            const nilaiPlastik = beratPlastik * NILAI_TUKAR.plastikKeras;
+            const nilaiJaring = beratJaring * NILAI_TUKAR.jaringBekas;
+            const totalNilai = nilaiPlastik + nilaiJaring;
+
+            const formatRupiah = (angka) => {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+            };
+
+            nilaiTotalSpan.textContent = formatRupiah(totalNilai);
+            hasilDiv.classList.remove('hidden');
+
+            // Feedback visual pada input
+            document.getElementById('beratPlastik').classList.add('border-green-500');
+            document.getElementById('beratJaring').classList.add('border-green-500');
+
+            setTimeout(() => {
+                 document.getElementById('beratPlastik').classList.remove('border-green-500');
+                 document.getElementById('beratJaring').classList.remove('border-green-500');
+            }, 1000);
+        }
+
+        // Fungsi untuk Kalkulator Penghasilan di bagian Cara Menjual
+        function hitungPenghasilan() {
+            const jenisSampah = document.getElementById('jenis-sampah').value;
+            const beratSampah = parseFloat(document.getElementById('berat-sampah').value) || 0;
+            const hasilDiv = document.getElementById('hasil-penghasilan');
+            const nilaiSpan = document.getElementById('nilai-penghasilan');
+
+            let hargaPerKg = 0;
+            
+            if (jenisSampah === 'plastik-keras') {
+                hargaPerKg = NILAI_TUKAR.plastikKeras;
+            } else if (jenisSampah === 'jaring-ikan') {
+                hargaPerKg = NILAI_TUKAR.jaringBekas;
+            } else if (jenisSampah === 'plastik-lunak') {
+                hargaPerKg = NILAI_TUKAR.plastikLunak;
+            }
+
+            const totalNilai = beratSampah * hargaPerKg;
+
+            const formatRupiah = (angka) => {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+            };
+
+            nilaiSpan.textContent = formatRupiah(totalNilai);
+            hasilDiv.classList.remove('hidden');
+        }
+
+        // Fungsi untuk mencari lokasi terdekat (simulasi)
+        function findNearestLocation() {
+            const lokasiInput = document.getElementById('lokasi-input').value;
+            const mapContainer = document.querySelector('.map-placeholder');
+            
+            if (lokasiInput.trim() === '') {
+                alert('Silakan masukkan lokasi Anda terlebih dahulu');
+                return;
+            }
+            
+            // Simulasi pencarian lokasi
+            mapContainer.innerHTML = `
+                <div class="text-4xl">📍</div>
+                <p class="text-lg font-semibold">Cabang Terdekat dari ${lokasiInput}</p>
+                <p class="text-sm mt-2">Menampilkan 3 cabang terdekat</p>
+                <div class="mt-4 space-y-2 text-left">
+                    <div class="p-2 bg-cyan-50 rounded">
+                        <p class="font-semibold">Cabang Jakarta</p>
+                        <p class="text-xs">Jl. Marina Ancol No. 45 - 5 km</p>
+                    </div>
+                    <div class="p-2 bg-cyan-50 rounded">
+                        <p class="font-semibold">Cabang Tangerang</p>
+                        <p class="text-xs">Jl. Pantai Indah Kapuk - 12 km</p>
+                    </div>
+                    <div class="p-2 bg-cyan-50 rounded">
+                        <p class="font-semibold">Cabang Bekasi</p>
+                        <p class="text-xs">Jl. Pantai Mutiara - 18 km</p>
+                    </div>
+                </div>
+                <button onclick="resetMap()" class="mt-4 bg-teal-500 text-white py-2 px-4 rounded text-sm hover:bg-teal-600 transition duration-300">
+                    Cari Lokasi Lain
+                </button>
+            `;
+        }
+
+        // Fungsi untuk mereset peta
+        function resetMap() {
+            const mapContainer = document.querySelector('.map-placeholder');
+            mapContainer.innerHTML = `
+                <div class="text-4xl">🗺️</div>
+                <p class="text-lg font-semibold">Peta Lokasi Cabang</p>
+                <p class="text-sm mt-2">Masukkan lokasi Anda untuk melihat cabang terdekat</p>
+            `;
+            document.getElementById('lokasi-input').value = '';
+        }
+
+        // Fungsi untuk membuka Modal Donasi/Relawan
+        function openDonationModal() {
+            document.getElementById('donationModal').style.display = 'block';
+        }
+
+        // Fungsi untuk menutup Modal Donasi/Relawan
+        function closeDonationModal() {
+            document.getElementById('donationModal').style.display = 'none';
+        }
+
+        // Menutup modal jika user klik di luar area modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('donationModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Fungsi Toggle Menu Mobile
+        document.getElementById('menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Menutup menu saat link diklik (untuk UX mobile)
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

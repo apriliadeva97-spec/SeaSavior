@@ -1,0 +1,168 @@
+/* Variabel Warna (Sesuai Rancangan) */
+:root {
+    --color-primary: #004c8c; /* Biru Laut Tua */
+    --color-secondary: #00d2b1; /* Hijau Tosca/Mint */
+    --color-accent: #ffb800; /* Kuning Cerah untuk CTA */
+    --color-text: #333;
+    --color-light: #f4f4f4;
+}
+
+/* Reset Dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ======================== HEADER / NAVIGASI ======================== */
+
+.header {
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.logo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+}
+
+.nav ul li a {
+    text-decoration: none;
+    color: var(--color-text);
+    padding: 10px 15px;
+    transition: color 0.3s;
+}
+
+.nav ul li a:hover {
+    color: var(--color-secondary);
+}
+
+/* Gaya Tombol CTA */
+.cta-button {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.cta-button.primary {
+    background-color: var(--color-accent);
+    color: var(--color-primary); /* Teks gelap di atas tombol cerah */
+}
+
+.cta-button.primary:hover {
+    background-color: #ffd44d; /* Warna sedikit lebih terang */
+}
+
+/* ======================== HERO SECTION ======================== */
+
+.hero-section {
+    background: linear-gradient(rgba(0, 76, 140, 0.7), rgba(0, 210, 177, 0.6)), url('placeholder-laut-sampah.jpg') center/cover no-repeat;
+    /* GANTI 'placeholder-laut-sampah.jpg' dengan gambar laut Anda */
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+    min-height: 70vh; /* Tinggi minimal 70% dari viewport */
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3.2em;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.3em;
+    margin-bottom: 40px;
+}
+
+.hero-cta-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.cta-button.large {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.cta-button.secondary {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+.cta-button.secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ======================== SECTION INFO (Contoh) ======================== */
+
+.info-section {
+    padding: 60px 0;
+    background-color: var(--color-light);
+    text-align: center;
+}
+
+.info-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 40px;
+    font-size: 2em;
+    color: var(--color-primary);
+}
+
+/* Media Query Dasar untuk Responsif (Penting!) */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+    }
+    .nav ul {
+        padding: 10px 0;
+        justify-content: center;
+    }
+    .hero-content h1 {
+        font-size: 2.2em;
+    }
+    .hero-cta-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
